@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+*.exe
+
+# Env & secrets
+.env
+.env.local
+
+# Local SQLite database
+*.db
+*.db-journal
+
+# Uploaded files
+uploads/
+backend/uploads/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+
+# TS build info
+*.tsbuildinfo
