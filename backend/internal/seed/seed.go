@@ -10,8 +10,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// Accounts seeds the two milestone-1 accounts (DIROPS and KADEP) if the user
-// table is empty. Passwords come from the environment so they can be rotated.
+// Accounts seeds the default accounts (CEO, DIROPS, KADEP, Legal Permit) if the
+// user table is empty. Passwords come from the environment so they can be rotated.
 func Accounts(users *repository.UserRepository, cfg *config.Config) error {
 	count, err := users.Count()
 	if err != nil {
@@ -27,8 +27,10 @@ func Accounts(users *repository.UserRepository, cfg *config.Config) error {
 		role     model.Role
 		password string
 	}{
+		{"CEO", "ceo@greenpark.id", model.RoleCEO, cfg.SeedCEOPassword},
 		{"Direktur Operasional", "dirops@greenpark.id", model.RoleDirops, cfg.SeedDiropsPassword},
 		{"Kepala Departemen", "kadep@greenpark.id", model.RoleKadep, cfg.SeedKadepPassword},
+		{"Legal Permit", "legal@greenpark.id", model.RoleLegalPermit, cfg.SeedLegalPassword},
 	}
 
 	for _, d := range defaults {

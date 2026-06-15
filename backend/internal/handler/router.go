@@ -26,6 +26,8 @@ func NewRouter(db *gorm.DB, cfg *config.Config) *gin.Engine {
 	ptRepo := repository.NewPTRepository(db)
 	settingRepo := repository.NewSettingRepository(db)
 	deadlineRepo := repository.NewDeadlineRepository(db)
+	vendorRepo := repository.NewVendorRepository(db)
+	spkRepo := repository.NewSPKRepository(db)
 
 	// Infrastructure
 	tokenMgr := middleware.NewTokenManager(cfg.JWTSecret, cfg.JWTExpiryHours)
@@ -40,6 +42,8 @@ func NewRouter(db *gorm.DB, cfg *config.Config) *gin.Engine {
 	ptSvc := service.NewPTService(ptRepo, cfg.UploadDir)
 	settingSvc := service.NewSettingService(settingRepo)
 	dashboardSvc := service.NewDashboardService(stepRepo, deadlineSvc)
+	vendorSvc := service.NewVendorService(vendorRepo)
+	spkSvc := service.NewSPKService(spkRepo, vendorRepo)
 
 	// Seed defaults: DACI/notification settings and Master Deadline rules.
 	if err := settingSvc.EnsureDefaults(); err != nil {
@@ -58,6 +62,8 @@ func NewRouter(db *gorm.DB, cfg *config.Config) *gin.Engine {
 	dashboardH := NewDashboardHandler(dashboardSvc, docSvc)
 	ocrH := NewOCRHandler(ocrProvider)
 	deadlineH := NewDeadlineHandler(deadlineSvc)
+	vendorH := NewVendorHandler(vendorSvc)
+	spkH := NewSPKHandler(spkSvc)
 
 	r := gin.Default()
 	r.MaxMultipartMemory = 16 << 20 // 16 MiB
@@ -103,6 +109,28 @@ func NewRouter(db *gorm.DB, cfg *config.Config) *gin.Engine {
 			authed.GET("/pt/:id", ptH.Get)
 			authed.POST("/pt/:id/documents", ptH.UploadDocument)
 			authed.GET("/pt-documents/:id/download", ptH.DownloadDocument)
+
+			// Master Data Vendor / Pihak Ketiga (Proses I).
+			authed.GET("/vendors", vendorH.List)
+			authed.GET("/vendors/:id", vendorH.Get)
+			authed.POST("/vendors", vendorH.Create)
+			authed.PUT("/vendors/:id", vendorH.Update)
+
+			// SPK Legal Permit (Proses J). Create = KADEP; approve/reject = DIROPS.
+			authed.GET("/spk/types", spkH.Types)
+			authed.GET("/spk", spkH.List)
+			authed.GET("/spk/:id", spkH.Get)
+			spkCreate := authed.Group("")
+			spkCreate.Use(middleware.RequireRole(model.RoleKadep))
+			{
+				spkCreate.POST("/spk", spkH.Create)
+			}
+			spkApprove := authed.Group("")
+			spkApprove.Use(middleware.RequireRole(model.RoleDirops))
+			{
+				spkApprove.POST("/spk/:id/approve", spkH.Approve)
+				spkApprove.POST("/spk/:id/reject", spkH.Reject)
+			}
 
 			// Dashboard: early warning + document search.
 			authed.GET("/dashboard/warnings", dashboardH.EarlyWarnings)

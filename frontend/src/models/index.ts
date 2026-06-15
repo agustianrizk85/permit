@@ -132,6 +132,81 @@ export interface CreatePTInput {
   notes?: string;
 }
 
+// --- Master Data Vendor / Pihak Ketiga (Proses I) ---
+
+export interface Vendor {
+  id: number;
+  category: string;
+  name: string;
+  address: string;
+  ktp_number: string;
+  account_number: string;
+  bank_name: string;
+  account_holder: string;
+  notes: string;
+  created_by: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface VendorInput {
+  category?: string;
+  name: string;
+  address?: string;
+  ktp_number?: string;
+  account_number?: string;
+  bank_name?: string;
+  account_holder?: string;
+  notes?: string;
+}
+
+// --- SPK Legal Permit (Proses J) ---
+
+export type SPKStatus = "draft" | "approved" | "rejected";
+export type PricingMode = "per_meter" | "per_unit" | "lumpsum";
+
+export interface SPKType {
+  code: string;
+  name: string;
+  pricing_mode: PricingMode;
+}
+
+export interface SPK {
+  id: number;
+  number: string;
+  type: string;
+  type_name: string;
+  project_id: number | null;
+  project?: Project | null;
+  vendor_id: number;
+  vendor?: Vendor | null;
+  pricing_mode: PricingMode;
+  unit_price: number;
+  quantity: number;
+  total: number;
+  completion_time: string;
+  payment_terms: string;
+  scope_note: string;
+  status: SPKStatus;
+  created_by: number;
+  approved_by: number | null;
+  approved_at: string | null;
+  decision_note: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateSPKInput {
+  type: string;
+  vendor_id: number;
+  project_id?: number | null;
+  unit_price?: number;
+  quantity?: number;
+  completion_time?: string;
+  payment_terms?: string;
+  scope_note?: string;
+}
+
 // --- Dashboard ---
 
 export type WarningSeverity = "critical" | "warning" | "info";

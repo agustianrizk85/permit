@@ -4,14 +4,7 @@ import type { Project } from "@/models";
 import { projectService } from "@/services/project.service";
 import { EarlyWarningPanel } from "@/components/EarlyWarningPanel";
 import { DocumentSearch } from "@/components/DocumentSearch";
-
-const stageLabel: Record<string, string> = {
-  pra_akad: "Pra-Akad",
-  akad: "Akad",
-  permit: "Permit",
-  legal: "Legal",
-  done: "Selesai",
-};
+import { StageStepper } from "@/components/StageStepper";
 
 export function DashboardPage() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -68,8 +61,8 @@ export function DashboardPage() {
             <Link key={p.id} to={`/projects/${p.id}`} className="card project-card">
               <div className="project-card-head">
                 <h3>{p.name}</h3>
-                <span className={`badge stage-${p.stage}`}>{stageLabel[p.stage]}</span>
               </div>
+              <StageStepper stage={p.stage} />
               <div className="muted small">{p.location || "Lokasi belum diisi"}</div>
               <div className="project-meta">
                 <span>Pemilik: {p.owner_name || "—"}</span>

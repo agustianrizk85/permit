@@ -29,7 +29,7 @@ export function ProjectDetailPage() {
     return Math.round((done / steps.length) * 100);
   }, [steps]);
 
-  // Group steps by macro category (only A in milestone 1).
+  // Group steps by macro category.
   const grouped = useMemo(() => {
     const map = new Map<string, ProcessStep[]>();
     for (const s of steps) {
@@ -39,6 +39,11 @@ export function ProjectDetailPage() {
     }
     return Array.from(map.entries());
   }, [steps]);
+
+  // Collapsed categories (by code). Default: all expanded.
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  const toggle = (category: string) =>
+    setCollapsed((prev) => ({ ...prev, [category]: !prev[category] }));
 
   const onStepChange = (updated: ProcessStep) => {
     setProject((prev) =>
@@ -75,16 +80,33 @@ export function ProjectDetailPage() {
         <span className="progress-label">{progress}% selesai</span>
       </div>
 
-      {grouped.map(([category, list]) => (
-        <section key={category} className="category-section">
-          <h2 className="category-title">{categoryLabels[category] ?? `Kategori ${category}`}</h2>
-          <div className="steps">
-            {list.map((s) => (
-              <StepCard key={s.id} step={s} onChange={onStepChange} />
-            ))}
-          </div>
-        </section>
-      ))}
+      {grouped.map(([category, list]) => {
+        const isOpen = !collapsed[category];
+        const doneCount = list.filter((s) => s.status === "done").length;
+        return (
+          <section key={category} className="category-section">
+            <button
+              type="button"
+              className="category-title category-toggle"
+              onClick={() => toggle(category)}
+              aria-expanded={isOpen}
+            >
+              <span className={`chevron ${isOpen ? "chevron-open" : ""}`}>▶</span>
+              <span className="category-name">{categoryLabels[category] ?? `Kategori ${category}`}</span>
+              <span className="category-count">
+                {doneCount}/{list.length}
+              </span>
+            </button>
+            {isOpen && (
+              <div className="steps">
+                {list.map((s) => (
+                  <StepCard key={s.id} step={s} onChange={onStepChange} />
+                ))}
+              </div>
+            )}
+          </section>
+        );
+      })}
     </div>
   );
 }

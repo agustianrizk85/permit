@@ -4,6 +4,8 @@ import { LoginPage } from "@/pages/LoginPage";
 import { DashboardPage } from "@/pages/DashboardPage";
 import { ProjectDetailPage } from "@/pages/ProjectDetailPage";
 import { PTPage } from "@/pages/PTPage";
+import { VendorPage } from "@/pages/VendorPage";
+import { SPKPage } from "@/pages/SPKPage";
 import { DeadlinePage } from "@/pages/DeadlinePage";
 import { SettingsPage } from "@/pages/SettingsPage";
 import { Layout } from "@/components/Layout";
@@ -30,6 +32,8 @@ export function App() {
         <Route path="/" element={<DashboardPage />} />
         <Route path="/projects/:id" element={<ProjectDetailPage />} />
         <Route path="/pt" element={<PTPage />} />
+        <Route path="/vendors" element={<VendorPage />} />
+        <Route path="/spk" element={<SPKPage />} />
         <Route path="/deadline" element={<DeadlinePage />} />
         <Route path="/settings" element={<SettingsPage />} />
       </Route>

@@ -20,7 +20,6 @@ export const categoryLabels: Record<string, string> = {
   D: "D · Legal Pasca Akad Lahan",
   F: "F · Master Data PKS Bank",
   H: "H · Flow Bisnis PKS Bank",
-  I: "I · SPK Legal Permit",
 };
 
 const t = (key: string, label: string, type: MetadataField["type"] = "text"): MetadataField => ({
@@ -50,6 +49,7 @@ export const stepHints: Record<string, StepHints> = {
   B4: { docTypes: ["Akta KSO", "Akta Kuasa Jual", "Akta Kuasa Mengelola Lahan", "Akta PPJB Termin"] },
   // C
   C1: { docTypes: ["KTP Warga & RT/RW", "Izin Tetangga", "Surat Kompensasi", "Kwitansi"] },
+  C13: { metadata: [t("nama_izin", "Nama Izin"), t("catatan", "Catatan")] },
   // F
   F1: { metadata: [t("gdrive_folder_link", "Link Folder Gdrive (share)")] },
   F2: { docTypes: ["Formulir PKS Bank"] },
@@ -59,16 +59,6 @@ export const stepHints: Record<string, StepHints> = {
   H3: { metadata: [t("catatan_revisi", "Catatan Revisi")] },
   H4: { metadata: [t("tanggal_ttd", "Tanggal TTD", "date")] },
   H5: { docTypes: ["Salinan Akta PKS Bank"] },
-  // I
-  I1: {
-    metadata: [
-      t("nomor_spk", "Nomor SPK"),
-      t("vendor", "Vendor"),
-      t("nilai_spk", "Nilai SPK (Rp)", "number"),
-      t("tanggal_spk", "Tanggal SPK", "date"),
-      t("ruang_lingkup", "Ruang Lingkup"),
-    ],
-  },
 };
 
 export function hintsFor(code: string): StepHints {

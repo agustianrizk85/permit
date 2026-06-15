@@ -47,6 +47,8 @@ func Connect(cfg *config.Config) (*gorm.DB, error) {
 		&model.PTDocument{},
 		&model.Setting{},
 		&model.DeadlineRule{},
+		&model.Vendor{},
+		&model.SPK{},
 	); err != nil {
 		return nil, err
 	}

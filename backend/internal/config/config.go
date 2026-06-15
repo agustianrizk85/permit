@@ -29,6 +29,8 @@ type Config struct {
 
 	SeedDiropsPassword string
 	SeedKadepPassword  string
+	SeedCEOPassword    string
+	SeedLegalPassword  string
 }
 
 // Load reads configuration from a .env file (if present) and the environment.
@@ -56,6 +58,8 @@ func Load() *Config {
 
 		SeedDiropsPassword: getEnv("SEED_DIROPS_PASSWORD", "dirops123"),
 		SeedKadepPassword:  getEnv("SEED_KADEP_PASSWORD", "kadep123"),
+		SeedCEOPassword:    getEnv("SEED_CEO_PASSWORD", "ceo123"),
+		SeedLegalPassword:  getEnv("SEED_LEGAL_PASSWORD", "legal123"),
 	}
 }
 

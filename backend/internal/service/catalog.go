@@ -27,7 +27,6 @@ var CategoryLabels = map[string]string{
 	"D": "D · Legal Pasca Akad Lahan",
 	"F": "F · Master Data PKS Bank",
 	"H": "H · Flow Bisnis PKS Bank",
-	"I": "I · SPK Legal Permit",
 }
 
 // ProcessA — Pra Akad Lahan (Simultan).
@@ -71,6 +70,8 @@ var ProcessC = []StepTemplate{
 	{Code: "C10", Category: "C", Name: "Siteplan", RequiresPrice: true, RequiresSPK: true, PriceLabel: "Harga Fix", NotifyDepartments: true, SLADays: 30},
 	{Code: "C11", Category: "C", Name: "TPU-PSU", RequiresPrice: true, RequiresSPK: true, PriceLabel: "Harga Fix", SLADays: 30},
 	{Code: "C12", Category: "C", Name: "IMB Induk-Rincik / PBG Induk-Rincik", RequiresPrice: true, RequiresSPK: true, PriceLabel: "Harga Fix", ConfidentialOutput: true, SLADays: 60},
+	{Code: "C13", Category: "C", Name: "Izin Lainnya (Opsional)", SLADays: 30,
+		MetadataKeys: []string{"nama_izin", "catatan"}},
 }
 
 // ProcessD — Legal Pasca Akad Lahan (berdasarkan Siteplan C10).
@@ -101,13 +102,9 @@ var ProcessH = []StepTemplate{
 		DocTypes: []string{"Salinan Akta PKS Bank"}},
 }
 
-// ProcessI — SPK Legal Permit (registrasi SPK untuk item ber-SPK).
-var ProcessI = []StepTemplate{
-	{Code: "I1", Category: "I", Name: "Pembuatan SPK Legal Permit", SLADays: 7,
-		MetadataKeys: []string{"nomor_spk", "vendor", "nilai_spk", "tanggal_spk", "ruang_lingkup"}},
-}
-
 // Catalog returns every step template instantiated for a new project, in order.
+// SPK Legal Permit (Proses J) and Vendor master (Proses I) are standalone
+// modules, not per-project steps, so they are not part of the catalog.
 func Catalog() []StepTemplate {
 	var all []StepTemplate
 	all = append(all, ProcessA...)
@@ -116,7 +113,6 @@ func Catalog() []StepTemplate {
 	all = append(all, ProcessD...)
 	all = append(all, ProcessF...)
 	all = append(all, ProcessH...)
-	all = append(all, ProcessI...)
 	return all
 }
 
