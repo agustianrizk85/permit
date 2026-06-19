@@ -78,12 +78,19 @@ func NewRouter(db *gorm.DB, cfg *config.Config) *gin.Engine {
 
 	r.GET("/health", func(c *gin.Context) { c.JSON(200, gin.H{"status": "ok"}) })
 
+	hub := NewRealtimeHub()
+
 	api := r.Group("/api")
 	{
 		api.POST("/auth/login", authH.Login)
+		// Realtime push: validates its own ?token= (browsers can't set WS headers).
+		api.GET("/ws", hub.ServeWS(tokenMgr))
 
 		authed := api.Group("")
 		authed.Use(middleware.Auth(tokenMgr))
+		// Bump the realtime revision on every successful write so all connected
+		// dashboards refresh instantly.
+		authed.Use(hub.BumpMiddleware())
 		{
 			authed.GET("/auth/me", authH.Me)
 
